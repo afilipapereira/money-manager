@@ -1,20 +1,38 @@
 'use client';
-import { Roboto } from 'next/font/google';
 import { createTheme } from '@mui/material/styles';
-
-const roboto = Roboto({
-  weight: ['300', '400', '500', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-});
 
 const theme = createTheme({
   cssVariables: true,
   palette: {
     mode: 'light',
+    primary: {
+      main: '#017FFF',      // brand‑blue
+      light: '#63a4ff',
+      dark:  '#004ba0',
+      contrastText: '#fff',
+    },
+    secondary: {
+      main: '#9c27b0',      // brand‑purple
+    },
+    // You can add any extra slot
+    success: {
+      main: '#2e7d32',
+    },
+    // Or create your own named palette slot
+    infoAlt: {
+      main: '#0288d1',
+    },
+    background: {
+      default: '#F9F9F9',
+      paper:   '#fff',
+    },
+    text: {
+      primary:   '#212121',
+      secondary: '#616161',
+    },
   },
   typography: {
-    fontFamily: roboto.style.fontFamily,
+    fontFamily: `'Nunito', 'sans-serif'`,
   },
   components: {
     MuiAlert: {
