@@ -27,11 +27,14 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 import { useState } from 'react';
 
+import { supabase } from '@/utils/supabase/client';
+
 export default function NewExpense() {
+
   const [formData, setFormData] = useState({
     name: '',
     amount: '',
-    sharedBy: '',
+    shared_by: '',
     category: '',
     date: '',
     message: '',
@@ -41,11 +44,24 @@ export default function NewExpense() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const handleAmountValueChange = (values) => {
+    setFormData((prev) => ({ ...prev, amount: values.value }));
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const { error } = await supabase.from('expenses').insert([
+      {
+        name: formData.name,
+        amount: formData.amount,
+        shared_by: formData.shared_by,
+        date: formData.date,
+        message: formData.message,
+      },
+    ]);
+
+    if (error) console.error('Insert failed:', error);
     console.log('Submitted:', formData);
-    // Handle form submission logic
   };
 
   return (
@@ -84,7 +100,7 @@ export default function NewExpense() {
             label="Amount"
             name="amount"
             value={formData.amount}
-            onChange={handleChange}
+            onValueChange={handleAmountValueChange}
             customInput={TextField}
             slotProps={{ inputLabel: { shrink: true, }}}
             valueIsNumericString
@@ -96,8 +112,8 @@ export default function NewExpense() {
           />
           <TextField
             label="Shared by"
-            name="sharedBy"
-            value={formData.sharedBy}
+            name="shared_by"
+            value={formData.shared_by}
             type="number"
             onChange={handleChange}
             slotProps={{ inputLabel: { shrink: true, }}}
@@ -195,7 +211,7 @@ export default function NewExpense() {
             label="Date"
             name="date"
             type="date"
-            value={formData.dateOfBirth}
+            value={formData.date}
             onChange={handleChange}
             slotProps={{ inputLabel: { shrink: true, }}}
             fullWidth
