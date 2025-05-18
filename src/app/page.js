@@ -1,47 +1,19 @@
-'use client';
+import HomeHeading from './components/HomeHeading';
+import NewExpense from './components/NewExpense';
+import ExpensesList from '@/app/components/ExpensesList';
 
-import AddIcon from '@mui/icons-material/Add';
-import {
-  Box,
-  Fab,
-  Typography,
-} from '@mui/material';
+import { supabase } from '@/utils/supabase/client';
 
-import { useState } from 'react';
-
-import NewExpense from '@/app/components/forms/NewExpense';
-
-export default function Home() {
-  const [newExpenseOpen, setNewExpenseOpen] = useState(false);
-  const handleNewExpenseOpen = () => {
-    setNewExpenseOpen(true);
-  };
-  const handleNewExpenseClose = () => {
-    setNewExpenseOpen(false);
-  };
+export default async function Home() {
+  const { data: expenses } = await supabase.from('expenses').select();
+  const { data: categories } = await supabase.from('categories').select();
 
   return (
-    <Box>
-      <Box sx={{ position: 'relative', height: '100vh', padding: '15px' }}>
-        <Typography variant="h6" component="h1" gutterBottom>
-          Hi Filipa!
-        </Typography>
+    <>
+      <HomeHeading />
+      <NewExpense categories={categories} />
 
-        {newExpenseOpen && <NewExpense/>}
-        
-        {!newExpenseOpen && (
-          <Fab color="primary" 
-              aria-label="add"
-              sx={{
-                position: 'absolute',
-                bottom: '15px',
-                right: '15px',
-              }}
-              >
-            <AddIcon onClick={handleNewExpenseOpen}/>
-          </Fab>
-        )}
-      </Box>
-    </Box>
+      {expenses && <ExpensesList expenses={expenses} />}
+    </>
   );
 }

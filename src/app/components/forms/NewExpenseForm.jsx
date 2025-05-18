@@ -28,8 +28,26 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { useState } from 'react';
 
 import { supabase } from '@/utils/supabase/client';
+import { Payments } from '@mui/icons-material';
 
-export default function NewExpense() {
+export const categoryIconMap = {
+  shopping: ShoppingCartIcon,
+  fixed_expenses: PaymentsIcon,
+  eat_out: RestaurantIcon,
+  public_transports: DirectionsSubwayFilledIcon,
+  car: DirectionsCarIcon,
+  for_me: PersonIcon,
+  entertainment: TheaterComedyIcon,
+  health: HealthAndSafetyIcon,
+  vacation: BeachAccessIcon,
+  house: ChairIcon,
+  subscriptions: SubscriptionsIcon,
+  gifts: CardGiftcardIcon,
+  education: SchoolIcon,
+  bank: AccountBalanceIcon,
+};
+
+export default function NewExpenseForm({categories, handleNewExpenseClose}) {
 
   const [formData, setFormData] = useState({
     name: '',
@@ -50,23 +68,25 @@ export default function NewExpense() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const { error } = await supabase.from('expenses').insert([
       {
         name: formData.name,
         amount: formData.amount,
         shared_by: formData.shared_by,
+        category: formData.category,
         date: formData.date,
         message: formData.message,
       },
     ]);
 
     if (error) console.error('Insert failed:', error);
-    console.log('Submitted:', formData);
   };
 
   return (
-    <Box sx={{ position: 'fixed', inset: 0, zIndex: 10, padding: '15px', backgroundColor: 'rgba(0, 0, 0, 0.1)' }}>
+    <Box sx={{ position: 'fixed', inset: 0, zIndex: 10, padding: '20px', backgroundColor: 'rgba(0, 0, 0, 0.1)' }} onClick={handleNewExpenseClose}>
       <Box
+        onClick={e => e.stopPropagation()}
         component="form"
         onSubmit={handleSubmit}
         sx={{
@@ -121,92 +141,35 @@ export default function NewExpense() {
             variant="standard"
             sx={{ pb: 2 }}
           />
+          
+          {categories && (
+            <TextField
+              label="Category"
+              name="category"
+              id="category"
+              select
+              value={formData.category}
+              onChange={handleChange}
+              slotProps={{ inputLabel: { shrink: true, }}}
+              fullWidth
+              required
+              variant="standard"
+              sx={{ pb: 2}}
+            >
+              {categories.map((category) => {
+                const Icon = categoryIconMap[category.icon_key] || PaymentsIcon;
 
-          <TextField
-            label="Category"
-            name="category"
-            id="category"
-            select
-            value={formData.category}
-            onChange={handleChange}
-            slotProps={{ inputLabel: { shrink: true, }}}
-            fullWidth
-            required
-            variant="standard"
-            sx={{ pb: 2}}
-          >
-            <MenuItem value={`fixed-expenses`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <PaymentsIcon fontSize="small" sx={{ mr: 1 }} />Fixed Expenses
-              </Box>
-            </MenuItem>
-            <MenuItem value={`shopping`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <ShoppingCartIcon fontSize="small" sx={{ mr: 1 }} />Shopping
-              </Box>
-            </MenuItem>
-            <MenuItem value={`eat-out`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <RestaurantIcon fontSize="small" sx={{ mr: 1 }} />Eat Out
-              </Box>
-            </MenuItem>
-            <MenuItem value={`public-transports`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <DirectionsSubwayFilledIcon fontSize="small" sx={{ mr: 1 }} />Public Transports
-              </Box>
-            </MenuItem>
-            <MenuItem value={`car`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <DirectionsCarIcon fontSize="small" sx={{ mr: 1 }} />Car
-              </Box>
-            </MenuItem>
-            <MenuItem value={`for-me`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <PersonIcon fontSize="small" sx={{ mr: 1 }} />For Me
-              </Box>
-            </MenuItem>
-            <MenuItem value={`entertainment`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <TheaterComedyIcon fontSize="small" sx={{ mr: 1 }} />Entertainment
-              </Box>
-            </MenuItem>
-            <MenuItem value={`health`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <HealthAndSafetyIcon fontSize="small" sx={{ mr: 1 }} />Health
-              </Box>
-            </MenuItem>
-            <MenuItem value={`vacation`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <BeachAccessIcon fontSize="small" sx={{ mr: 1 }} />Vacation
-              </Box>
-            </MenuItem>
-            <MenuItem value={`house`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <ChairIcon fontSize="small" sx={{ mr: 1 }} />House
-              </Box>
-            </MenuItem>
-            <MenuItem value={`subscriptions`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <SubscriptionsIcon fontSize="small" sx={{ mr: 1 }} />Subscriptions
-              </Box>
-            </MenuItem>
-            <MenuItem value={`gifts`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <CardGiftcardIcon fontSize="small" sx={{ mr: 1 }} />Gifts
-              </Box>
-            </MenuItem>
-            <MenuItem value={`education`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <SchoolIcon fontSize="small" sx={{ mr: 1 }} />Education
-              </Box>
-            </MenuItem>
-            <MenuItem value={`bank`}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <AccountBalanceIcon fontSize="small" sx={{ mr: 1 }} />Bank
-              </Box>
-            </MenuItem>
-          </TextField>
-
+                return (
+                  <MenuItem key={category.id} value={category.id}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Icon fontSize="small" sx={{ mr: 1 }} />
+                      {category.name}
+                    </Box>
+                  </MenuItem>
+                );
+              })}
+            </TextField>
+          )}
           <TextField
             label="Date"
             name="date"
