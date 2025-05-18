@@ -9,43 +9,10 @@ import {
   Typography
 } from '@mui/material';
 import { NumericFormat } from 'react-number-format';
-
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import PaymentsIcon from '@mui/icons-material/Payments';
-import RestaurantIcon from '@mui/icons-material/Restaurant';
-import DirectionsSubwayFilledIcon from '@mui/icons-material/DirectionsSubwayFilled';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import PersonIcon from '@mui/icons-material/Person';
-import TheaterComedyIcon from '@mui/icons-material/TheaterComedy';
-import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
-import ChairIcon from '@mui/icons-material/Chair';
-import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
-import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
-import SchoolIcon from '@mui/icons-material/School';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-
 import { useState } from 'react';
-
 import { supabase } from '@/utils/supabase/client';
-import { Payments } from '@mui/icons-material';
 
-export const categoryIconMap = {
-  shopping: ShoppingCartIcon,
-  fixed_expenses: PaymentsIcon,
-  eat_out: RestaurantIcon,
-  public_transports: DirectionsSubwayFilledIcon,
-  car: DirectionsCarIcon,
-  for_me: PersonIcon,
-  entertainment: TheaterComedyIcon,
-  health: HealthAndSafetyIcon,
-  vacation: BeachAccessIcon,
-  house: ChairIcon,
-  subscriptions: SubscriptionsIcon,
-  gifts: CardGiftcardIcon,
-  education: SchoolIcon,
-  bank: AccountBalanceIcon,
-};
+import Category from '@/app/components/Category';
 
 export default function NewExpenseForm({categories, handleNewExpenseClose}) {
 
@@ -156,18 +123,13 @@ export default function NewExpenseForm({categories, handleNewExpenseClose}) {
               variant="standard"
               sx={{ pb: 2}}
             >
-              {categories.map((category) => {
-                const Icon = categoryIconMap[category.icon_key] || PaymentsIcon;
-
-                return (
-                  <MenuItem key={category.id} value={category.id}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Icon fontSize="small" sx={{ mr: 1 }} />
-                      {category.name}
-                    </Box>
-                  </MenuItem>
-                );
-              })}
+              {categories.map((category) =>  (
+                <MenuItem key={category.id} value={category.id}>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Category category={category} />
+                  </Box>
+                </MenuItem>
+              ))}
             </TextField>
           )}
           <TextField
