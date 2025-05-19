@@ -6,7 +6,11 @@ import {
   Box,
   Stack,
   MenuItem,
-  Typography
+  Typography,
+  ToggleButtonGroup,
+  ToggleButton,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import { NumericFormat } from 'react-number-format';
 import { useState } from 'react';
@@ -19,19 +23,30 @@ export default function NewExpenseForm({categories, handleNewExpenseClose, handl
   const [formError, setFormError] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
+    type: 'expense',
     amount: '',
     shared_by: 1,
+    salary: false,
     category: '',
-    date: new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0].replace(/-/g, '/'),
+    date: new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0],
     message: '',
   });
-console.log('formData', formData);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
   const handleAmountValueChange = (values) => {
     setFormData((prev) => ({ ...prev, amount: values.value }));
+  };
+  const handleIsSalaryChange = (e) => {
+    const { checked } = e.target;
+    setFormData((prev) => ({ ...prev, salary: checked }));
+  };
+  const handleTransactionTypeChange = (event, transactionType) => {
+    if(transactionType === 'income')
+      setFormData((prev) => ({ ...prev, shared_by: 1, category: '15' }));
+    setFormData((prev) => ({ ...prev, type: transactionType }));
   };
 
   const validateForm = (data) => {
@@ -54,9 +69,11 @@ console.log('formData', formData);
 
     const { error } = await supabase.from('transactions').insert([
       {
+        type: formData.type,
         name: formData.name,
         amount: formData.amount / formData.shared_by,
         shared_by: formData.shared_by,
+        salary: formData.salary,
         category: formData.category,
         date: formData.date,
         message: formData.message,
@@ -86,13 +103,28 @@ console.log('formData', formData);
           p: 3,
           boxShadow: 2,
           borderRadius: 2,
+          overflow: 'auto',
           bgcolor: 'background.paper',
         }}
       >
         <Stack sx={{ height: '100%' }}>
-          <Typography variant="h6" component="h6" sx={{ pb: 5 }}>
-            Add new expense
-          </Typography>
+          <Box sx={{ pb: 6 }}>
+            <Typography variant="h6" component="h6" sx={{ pb: 1 }}>
+              Add new
+            </Typography>
+            <ToggleButtonGroup
+              label="Type"
+              name="type"
+              value={formData.type}
+              onChange={handleTransactionTypeChange}
+              required
+              exclusive
+            >
+              <ToggleButton value="expense">Expense</ToggleButton>
+              <ToggleButton value="income">Income</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+
           {formError && <Typography sx={{ pb: 1 }} color="error">{formError}</Typography>}
 
           <TextField
@@ -104,47 +136,81 @@ console.log('formData', formData);
             fullWidth
             required
             variant="standard"
-            sx={{ pb: 2 }}
+            sx={{ pb: 3 }}
           />
-          <NumericFormat
-            label="Amount"
-            name="amount"
-            value={formData.amount}
-            onValueChange={handleAmountValueChange}
-            customInput={TextField}
-            slotProps={{ inputLabel: { shrink: true, }}}
-            valueIsNumericString
-            prefix="€"
-            fullWidth
-            required
-            variant="standard"
-            sx={{ pb: 2 }}
-          />
-          <TextField
-            label="Shared by"
-            name="shared_by"
-            value={formData.shared_by}
-            type="number"
-            onChange={handleChange}
-            slotProps={{ inputLabel: { shrink: true, }}}
-            fullWidth
-            variant="standard"
-            sx={{ pb: 2 }}
-          />
-          
+
+           <Stack
+            direction="row"
+            spacing={3}
+            sx={{
+              justifyContent: "space-between",
+              pb: 3, 
+            }}
+          >
+            <NumericFormat
+              label="Amount"
+              name="amount"
+              value={formData.amount}
+              onValueChange={handleAmountValueChange}
+              customInput={TextField}
+              slotProps={{ inputLabel: { shrink: true, }}}
+              valueIsNumericString
+              prefix="€"
+              fullWidth
+              required
+              variant="standard"
+            />
+            <TextField
+              label="Shared by"
+              name="shared_by"
+              value={formData.shared_by}
+              type="number"
+              onChange={handleChange}
+              slotProps={{ inputLabel: { shrink: true, }}}
+              fullWidth
+              variant="standard"
+              sx={{ flexBasis: '40%', display: formData.type === 'income' ? 'none' : 'block' }}
+            />
+            
+            <Box
+              sx={{
+                flexBasis: '40%',
+                display: formData.type === 'income' ? 'block' : 'none',
+                paddingBottom: 2,
+              }}
+            >
+              <Typography
+                variant="caption"
+                sx={{ display: 'block', color: 'text.secondary', mb: 0.3 }}
+              >
+                Mark as salary?
+              </Typography>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    name="salary"
+                    checked={formData.salary}
+                    onChange={handleIsSalaryChange}
+                  />
+                }
+              />
+            </Box>
+          </Stack>
+
           {categories && (
             <TextField
               label="Category"
               name="category"
               id="category"
               select
-              value={formData.category}
+              value={formData.type === 'income' ? '15' : formData.category}
               onChange={handleChange}
               slotProps={{ inputLabel: { shrink: true, }}}
               fullWidth
               required
               variant="standard"
-              sx={{ pb: 2}}
+              disabled={formData.type === 'income'}
+              sx={{ pb: 3 }}
             >
               {categories.map((category) =>  (
                 <MenuItem key={category.id} value={category.id}>
@@ -164,7 +230,7 @@ console.log('formData', formData);
             slotProps={{ inputLabel: { shrink: true, }}}
             fullWidth
             variant="standard"
-            sx={{ pb: 2 }}
+            sx={{ pb: 3 }}
           />
 
           <TextField
@@ -173,11 +239,11 @@ console.log('formData', formData);
             value={formData.message}
             onChange={handleChange}
             multiline
-            rows={4}
+            rows={3}
             slotProps={{ inputLabel: { shrink: true, }}}
             fullWidth
             variant="standard"
-            sx={{ pb: 2 }}
+            sx={{ pb: 3 }}
           />
 
           <Button variant="contained" type="submit" sx={{ mt: 'auto' }}>
