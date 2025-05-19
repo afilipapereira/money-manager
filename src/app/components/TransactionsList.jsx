@@ -6,18 +6,19 @@ import {
 
 import Category from '@/app/components/Category';
 
-export default function ExpensesList({ expensesGroupedByMonth, categories }) {
+export default function TransactionsList({ transactionsGroupedByMonth, categories }) {
   return (
     <>
-      {Object.entries(expensesGroupedByMonth).map(([month, expenses]) => (
+      {Object.entries(transactionsGroupedByMonth).map(([month, transactions]) => (
 
-        <Box key={`expenses-group-${month}`} sx={{ marginTop: '3em'}}>
+        <Box key={`transactions-group-${month}`} sx={{ marginTop: '3em'}}>
           <Typography variant="body2" sx={{ borderBottom: '1px solid black', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
             {new Date(month).toLocaleString('default', { month: 'long', year: 'numeric' })}
           </Typography>
-          {expenses.map((expense, index) => {
-            const category = categories.find((cat) => cat.id === expense.category);
-            const date = new Date(expense.date);
+          
+          {transactions.map((transaction, index) => {
+            const category = categories.find((cat) => cat.id === transaction.category);
+            const date = new Date(transaction.date);
             const dateFormatted = date.toLocaleDateString('en-US', {
               month: 'short',
               day: 'numeric',
@@ -27,12 +28,17 @@ export default function ExpensesList({ expensesGroupedByMonth, categories }) {
             const amountFormatted = new Intl.NumberFormat('en-IE', {
               style: 'currency',
               currency: 'EUR',
-            }).format(expense.amount);
+            }).format(transaction.amount);
+
+            const totalAmountFormatted = new Intl.NumberFormat('en-IE', {
+              style: 'currency',
+              currency: 'EUR',
+            }).format(transaction.shared_by * transaction.amount);
 
             return (
-              <Box key={`expense-${index}`} sx={{ padding: '10px 0', borderBottom: '1px solid #ccc' }}>
-                <Stack key={expense.id} 
-                  direction="row" 
+              <Box key={`transaction-${index}`} sx={{ padding: '10px 0', borderBottom: '1px solid #ccc' }}>
+                <Stack key={transaction.id}
+                  direction="row"
                   spacing={3}
                   sx={{
                     justifyContent: "space-between",
@@ -40,13 +46,14 @@ export default function ExpensesList({ expensesGroupedByMonth, categories }) {
                 >
                   <Typography variant="caption" sx={{ lineHeight: 1.3, textAlign: 'center', textTransform: 'uppercase', alignSelf: 'center' }}>{month}<br/>{day}</Typography>
                   <Box sx={{flexGrow: 1}}>
-                    {expense.name}
+                    {transaction.name}
+                    <small>{transaction.shared_by > 1 && ` ${totalAmountFormatted}`}</small>
                     <br/>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Category category={category} />
                     </Box>
                   </Box>
-                  <Typography>{amountFormatted}</Typography>
+                  <Typography sx={{color: transaction.type === 'expense' ? 'red' : 'green'}}>{amountFormatted}</Typography>
                 </Stack>
               </Box>
             );

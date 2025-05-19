@@ -13,6 +13,7 @@ import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import SchoolIcon from '@mui/icons-material/School';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 export const categoryIconMap = {
   shopping: ShoppingCartIcon,
@@ -29,6 +30,7 @@ export const categoryIconMap = {
   gifts: CardGiftcardIcon,
   education: SchoolIcon,
   bank: AccountBalanceIcon,
+  income: MonetizationOnIcon,
 };
 
 export default function CategoryIcon({ category }) {

@@ -1,14 +1,21 @@
 import HomeHeading from './components/HomeHeading';
 import NewExpense from './components/NewExpense';
-import ExpensesList from '@/app/components/ExpensesList';
+import TransactionsList from '@/app/components/TransactionsList';
 
 import { supabase } from '@/utils/supabase/client';
 
 export default async function Home() {
-  const { data: expenses } = await supabase.from('expenses').select().order('date', { ascending: false });
+  const { data: transactions } = await supabase.from('transactions').select().order('date', { ascending: false });
   const { data: categories } = await supabase.from('categories').select();
 
-  const expensesGroupedByMonth = expenses.reduce((acc, expense) => {
+  const expensesAfterIncomeData = await supabase.from('expenses_sum_after_latest_income').select().single();
+  const expensesAfterIncome = expensesAfterIncomeData?.data?.expenses_sum_after_latest_income ?? 0;
+  const expensesAfterIncomeFormatted = new Intl.NumberFormat('en-IE', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(expensesAfterIncome);
+
+  const transactionsGroupedByMonth = transactions.reduce((acc, expense) => {
     const dateObj = new Date(expense.date);
     const monthYear = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
 
@@ -20,10 +27,10 @@ export default async function Home() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <HomeHeading />
+      <HomeHeading expensesAfterIncome={expensesAfterIncomeFormatted} />
       <NewExpense categories={categories} />
 
-      {expenses && <ExpensesList expensesGroupedByMonth={expensesGroupedByMonth} categories={categories} />}
+      {transactions && <TransactionsList transactionsGroupedByMonth={transactionsGroupedByMonth} categories={categories} />}
     </div>
   );
 }

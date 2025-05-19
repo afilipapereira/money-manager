@@ -24,7 +24,7 @@ export default function NewExpense({categories}) {
       <Fab color="primary"
         aria-label="add"
         sx={{
-          position: 'absolute',
+          position: 'fixed',
           bottom: '15px',
           right: '15px',
         }}

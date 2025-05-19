@@ -19,7 +19,7 @@ export default function NewExpenseForm({categories, handleNewExpenseClose}) {
   const [formData, setFormData] = useState({
     name: '',
     amount: '',
-    shared_by: '',
+    shared_by: 1,
     category: '',
     date: '',
     message: '',
@@ -36,10 +36,10 @@ export default function NewExpenseForm({categories, handleNewExpenseClose}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { error } = await supabase.from('expenses').insert([
+    const { error } = await supabase.from('transactions').insert([
       {
         name: formData.name,
-        amount: formData.amount,
+        amount: formData.amount / formData.shared_by,
         shared_by: formData.shared_by,
         category: formData.category,
         date: formData.date,
