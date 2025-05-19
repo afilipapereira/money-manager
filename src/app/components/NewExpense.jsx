@@ -18,6 +18,11 @@ export default function NewExpense({categories}) {
     setNewExpenseOpen(false);
   };
 
+  const handleSubmitSuccess = () => {
+    setNewExpenseOpen(false);
+    //Todo update list of transactions
+  }
+
   return(
     <>
     {!newExpenseOpen && (
@@ -32,7 +37,7 @@ export default function NewExpense({categories}) {
         <AddIcon onClick={handleNewExpenseOpen} />
       </Fab>
     )}
-      {newExpenseOpen && <NewExpenseForm categories={categories} handleNewExpenseClose={handleNewExpenseClose} />}
+      {newExpenseOpen && <NewExpenseForm categories={categories} handleNewExpenseClose={handleNewExpenseClose} handleSubmitSuccess={handleSubmitSuccess}/>}
     </>
   );
 }
