@@ -7,9 +7,9 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import NewExpenseForm from '@/app/components/forms/NewExpenseForm';
+import NewExpenseForm from '@/app/components/transactions/NewExpenseForm';
 
-export default function NewExpense({categories}) {
+export default function NewExpense({onTransactionAdded, categories}) {
   const [newExpenseOpen, setNewExpenseOpen] = useState(false);
   const handleNewExpenseOpen = () => {
     setNewExpenseOpen(true);
@@ -20,7 +20,7 @@ export default function NewExpense({categories}) {
 
   const handleSubmitSuccess = () => {
     setNewExpenseOpen(false);
-    //Todo update list of transactions
+    onTransactionAdded();
   }
 
   return(

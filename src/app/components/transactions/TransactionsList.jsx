@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Box,
   Typography,
@@ -6,7 +8,18 @@ import {
 
 import Category from '@/app/components/Category';
 
-export default function TransactionsList({ transactionsGroupedByMonth, categories }) {
+export default function TransactionsList({ transactions, categories }) {
+
+  const transactionsGroupedByMonth = transactions.reduce((acc, expense) => {
+    const dateObj = new Date(expense.date);
+    const monthYear = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+
+    if (!acc[monthYear]) acc[monthYear] = [];
+    acc[monthYear].push(expense);
+
+    return acc;
+  }, {});
+
   return (
     <>
       {Object.entries(transactionsGroupedByMonth).map(([month, transactions]) => (
