@@ -16,7 +16,7 @@ export async function SignInAction(formData) {
   const { error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    redirect('/error')
+    redirect('/login?error=' + encodeURIComponent(error.message))
   }
 
   revalidatePath('/', 'layout')
@@ -35,7 +35,7 @@ export async function signUpAction(formData) {
   const { error } = await supabase.auth.signUp(data)
 
   if (error) {
-    redirect('/error')
+    redirect('/sign-up?error=' + encodeURIComponent(error.message))
   }
 
   revalidatePath('/', 'layout')

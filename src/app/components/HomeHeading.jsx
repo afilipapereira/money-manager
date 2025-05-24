@@ -1,7 +1,6 @@
 import {
   Typography,
   Button,
-  Stack
 } from '@mui/material';
 import { signOutAction } from '@/app/actions';
 

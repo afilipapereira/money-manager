@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { signUpAction } from '@/app/actions';
 import { 
@@ -11,8 +12,19 @@ import {
   Stack,
 } from '@mui/material';
 
+import { useEffect } from 'react';
 
-export default function LoginPage() {
+export default function LoginPage({ searchParams }) {
+  const { error } = React.use(searchParams);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && error) {
+      const url = new URL(window.location);
+      url.searchParams.delete('error');
+      window.history.replaceState({}, '', url);
+    }
+  }, []);
+
   return (
     <Paper elevation={3} style={{ margin: '20px', minHeight: 'calc(100vh - 40px)' }}>
       <Box component="form" p={3}>
@@ -49,6 +61,8 @@ export default function LoginPage() {
             variant="standard"
             sx={{ pb: 3 }}
           />
+
+          {error && <Typography variant="body2" pb={3} color="error">{error}</Typography>}
 
           <Button formAction={signUpAction} variant="contained" type="submit" sx={{ mt: 'auto' }}>
             Sign up
