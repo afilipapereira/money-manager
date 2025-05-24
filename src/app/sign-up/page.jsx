@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { signup } from './actions';
+import { signUpAction } from '@/app/actions';
 import { 
   Paper, 
   Box,
@@ -50,7 +50,7 @@ export default function LoginPage() {
             sx={{ pb: 3 }}
           />
 
-          <Button formAction={signup} variant="contained" type="submit" sx={{ mt: 'auto' }}>
+          <Button formAction={signUpAction} variant="contained" type="submit" sx={{ mt: 'auto' }}>
             Sign up
           </Button>
           <Typography variant="body2" sx={{ m: 'auto', mt: 2, mb: 1 }}>

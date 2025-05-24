@@ -1,6 +1,6 @@
 'use client';
 
-import { login } from './actions';
+import { SignInAction } from '@/app/actions';
 import { 
   Paper, 
   Box,
@@ -41,7 +41,7 @@ export default function LoginPage() {
             sx={{ pb: 3 }}
           />
 
-          <Button formAction={login} variant="contained" type="submit" sx={{ mt: 'auto', mb: 2 }}>
+          <Button formAction={SignInAction} variant="contained" type="submit" sx={{ mt: 'auto', mb: 2 }}>
             Sign in
           </Button>
           <Button href="/sign-up" variant="outlined" sx={{ mt: 'auto' }}>

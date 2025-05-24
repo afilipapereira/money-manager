@@ -1,12 +1,19 @@
 import {
   Typography,
+  Button,
+  Stack
 } from '@mui/material';
-
+import { signOutAction } from '@/app/actions';
 
 export default function HomeHeading({user, expensesAfterIncome}) {
   return (
     <>
-      <Typography variant="h6" component="h1" gutterBottom>
+      <form action={signOutAction}>
+        <Button type="submit" sx={{display: 'block', mr: 0, ml: 'auto', fontSize: '0.75rem', mb: 2}}>
+          Sign out
+        </Button>
+      </form>
+      <Typography variant="body1" gutterBottom>
         Hi {user}!
       </Typography>
       <Typography>
