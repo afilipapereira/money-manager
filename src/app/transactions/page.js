@@ -1,9 +1,9 @@
-import HomeHeading from './components/HomeHeading';
-import TransactionsSection from './components/transactions/TransactionsSection';
+import HomeHeading from '../components/HomeHeading';
+import TransactionsSection from '../components/transactions/TransactionsSection';
 
 import { supabase } from '@/utils/supabase/client';
 
-export default async function Home() {
+export default async function Transactions() {
   const { data: categories } = await supabase.from('categories').select();
 
   const expensesAfterIncomeData = await supabase.from('expenses_sum_after_latest_income').select().single();
