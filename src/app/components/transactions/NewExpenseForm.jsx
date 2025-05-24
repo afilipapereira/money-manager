@@ -176,7 +176,6 @@ export default function NewExpenseForm({categories, handleNewExpenseClose, handl
               sx={{
                 flexBasis: '40%',
                 display: formData.type === 'income' ? 'block' : 'none',
-                paddingBottom: 2,
               }}
             >
               <Typography
@@ -191,6 +190,7 @@ export default function NewExpenseForm({categories, handleNewExpenseClose, handl
                     name="salary"
                     checked={formData.salary}
                     onChange={handleIsSalaryChange}
+                    sx={{ padding: 0, paddingLeft: '0.5em' }}
                   />
                 }
               />
