@@ -1,22 +1,20 @@
-import HomeHeading from '../components/HomeHeading';
-import TransactionsSection from '../components/transactions/TransactionsSection';
+import TransactionsSection from '@/app/components/transactions/TransactionsSection';
 
-import { supabase } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/server';
 
 export default async function Transactions() {
-  const { data: categories } = await supabase.from('categories').select();
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase.auth.getUser()
+  if (error || !data?.user) {
+    redirect('/login')
+  }
 
-  const expensesAfterIncomeData = await supabase.from('expenses_sum_after_latest_income').select().single();
-  const expensesAfterIncome = expensesAfterIncomeData?.data?.expenses_sum_after_latest_income ?? 0;
-  const expensesAfterIncomeFormatted = new Intl.NumberFormat('en-IE', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(expensesAfterIncome);
+  const { data: categories, error: catError } = await supabase.from('categories').select();
 
   return (
     <div style={{ padding: '20px' }}>
-      <HomeHeading expensesAfterIncome={expensesAfterIncomeFormatted} />
-      <TransactionsSection categories={categories} />
+      <TransactionsSection categories={categories} user={data.user.email} />
     </div>
   );
 }

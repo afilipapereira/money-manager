@@ -1,29 +1,50 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/client';
 import {
   Box,
 } from '@mui/material';
 
+import HomeHeading from '@/app/components//HomeHeading';
 import NewExpense from '@/app/components/transactions/NewExpense';
 import TransactionsList from '@/app/components/transactions/TransactionsList';
 
-export default function TransactionsSection({ categories }) {
+export default function TransactionsSection({ categories, user }) {
   const [transactions, setTransactions] = useState([]);
+  const [expensesAfterIncome, setExpensesAfterIncome] = useState(0);
 
   const fetchTransactions = async () => {
+    const supabase = await createClient();
     const { data } = await supabase.from('transactions').select().order('date', { ascending: false });
     setTransactions(data);
   };
 
-  useEffect(() => {
+  const fetchExpensesAfterIncome = async() => {
+    const supabase = await createClient();
+    const expensesAfterIncomeData = await supabase.from('expenses_sum_after_latest_income').select().single();
+    const expensesAfterIncome = expensesAfterIncomeData?.data?.expenses_sum_after_latest_income ?? 0;
+    const expensesAfterIncomeFormatted = new Intl.NumberFormat('en-IE', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(expensesAfterIncome);
+    setExpensesAfterIncome(expensesAfterIncomeFormatted);
+  }
+
+  const updateTransactionsSection = () => {
     fetchTransactions();
+    fetchExpensesAfterIncome();
+  };
+
+  useEffect(() => {
+    updateTransactionsSection();
   }, []);
 
   return (
     <>
-      <NewExpense onTransactionAdded={fetchTransactions} categories={categories} />
+      <HomeHeading user={user} expensesAfterIncome={expensesAfterIncome} />
+
+      <NewExpense onTransactionAdded={updateTransactionsSection} categories={categories} />
 
       {transactions.length > 0 ?
         <TransactionsList transactions={transactions} categories={categories} />

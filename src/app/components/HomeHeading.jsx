@@ -3,11 +3,11 @@ import {
 } from '@mui/material';
 
 
-export default function HomeHeading({expensesAfterIncome}) {
+export default function HomeHeading({user, expensesAfterIncome}) {
   return (
     <>
       <Typography variant="h6" component="h1" gutterBottom>
-        Hi Filipa!
+        Hi {user}!
       </Typography>
       <Typography>
         Total expenses this month: {expensesAfterIncome}
