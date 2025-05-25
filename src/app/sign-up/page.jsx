@@ -11,8 +11,9 @@ import {
   Typography,
   Stack,
 } from '@mui/material';
-
 import { useEffect } from 'react';
+
+import PopUpContainer from '@/app/components/ui/PopUpContainer';
 
 export default function LoginPage({ searchParams }) {
   const { error } = React.use(searchParams);
@@ -26,52 +27,49 @@ export default function LoginPage({ searchParams }) {
   }, []);
 
   return (
-    <Paper elevation={3} style={{ margin: '20px', minHeight: 'calc(100vh - 40px)' }}>
-      <Box component="form" p={3}>
+    <PopUpContainer>
+      <Box component="form">
         <Stack sx={{ height: '100%' }}>
-          <Typography variant="h6" component="h6" sx={{ pb: 7 }}>
+          <Typography variant="h6" component="h6" sx={{ pb: 5 }}>
             Sign up
           </Typography>
           <TextField
             label="Name"
             name="name"
-            slotProps={{ inputLabel: { shrink: true, }}}
             fullWidth
             required
             variant="standard"
-            sx={{ pb: 3 }}
+            sx={{ pb: 2 }}
           />
           <TextField
             label="Email"
             name="email"
             type="email"
-            slotProps={{ inputLabel: { shrink: true, }}}
             fullWidth
             required
             variant="standard"
-            sx={{ pb: 3 }}
+            sx={{ pb: 2 }}
           />
           <TextField
             label="Password"
             name="password"
             type="password"
-            slotProps={{ inputLabel: { shrink: true, }}}
             fullWidth
             required
             variant="standard"
-            sx={{ pb: 3 }}
+            sx={{ pb: 2 }}
           />
 
           {error && <Typography variant="body2" pb={3} color="error">{error}</Typography>}
 
-          <Button formAction={signUpAction} variant="contained" type="submit" sx={{ mt: 'auto' }}>
+          <Button formAction={signUpAction} variant="contained" type="submit" sx={{ mt: 4 }}>
             Sign up
           </Button>
           <Typography variant="body2" sx={{ m: 'auto', mt: 2, mb: 1 }}>
-            Already have an account? <Link href="/login" style={{ textDecoration: 'none',  color: 'inherit' }}>Sign in</Link>
+            <Link href="/login" style={{ textDecoration: 'none',  color: 'inherit' }}>Already have an account? Sign in</Link>
           </Typography>
         </Stack>
       </Box>
-    </Paper>
+    </PopUpContainer>
   )
 }

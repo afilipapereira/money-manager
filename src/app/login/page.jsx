@@ -3,20 +3,20 @@
 import React from 'react';
 import { SignInAction } from '@/app/actions';
 import { 
-  Paper, 
   Box,
   TextField,
   Button,
   Typography,
   Stack,
 } from '@mui/material';
-
 import { useEffect } from 'react';
+
+import PopUpContainer from '@/app/components/ui/PopUpContainer';
 
 
 export default function LoginPage({ searchParams }) {
   const { error } = React.use(searchParams);
-console.log('error', error);
+
   useEffect(() => {
     if (typeof window !== 'undefined' && error) {
       const url = new URL(window.location);
@@ -26,36 +26,34 @@ console.log('error', error);
   }, []);
 
   return (
-    <Paper elevation={3} style={{ margin: '20px', minHeight: 'calc(100vh - 40px)' }}>
-      <Box component="form" p={3}>
+    <PopUpContainer>
+      <Box component="form">
         <Stack sx={{ height: '100%' }}>
-          <Typography variant="h6" component="h6" sx={{ pb: 7 }}>
+          <Typography variant="h6" component="h6" sx={{ pb: 5 }}>
             Sign in
           </Typography>
           <TextField
             label="Email"
             name="email"
             type="email"
-            slotProps={{ inputLabel: { shrink: true, }}}
             fullWidth
             required
             variant="standard"
-            sx={{ pb: 3 }}
+            sx={{ pb: 2 }}
           />
           <TextField
             label="Password"
             name="password"
             type="password"
-            slotProps={{ inputLabel: { shrink: true, }}}
             fullWidth
             required
             variant="standard"
-            sx={{ pb: 3 }}
+            sx={{ pb: 2 }}
           />
 
           {error && <Typography variant="body2" pb={3} color="error">{error}</Typography>}
 
-          <Button formAction={SignInAction} variant="contained" type="submit" sx={{ mt: 'auto', mb: 2 }}>
+          <Button formAction={SignInAction} variant="contained" type="submit" sx={{ mt: 4, mb: 2 }}>
             Sign in
           </Button>
           <Button href="/sign-up" variant="outlined" sx={{ mt: 'auto' }}>
@@ -63,6 +61,6 @@ console.log('error', error);
           </Button>
         </Stack>
       </Box>
-    </Paper>
+    </PopUpContainer>
   )
 }
