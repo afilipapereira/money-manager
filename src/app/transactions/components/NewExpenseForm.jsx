@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import { NumericFormat } from 'react-number-format';
 import { useState } from 'react';
-import { supabase } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/client';
 
-import Category from '@/app/components/Category';
+import Category from './Category';
 
 export default function NewExpenseForm({categories, handleNewExpenseClose, handleSubmitSuccess}) {
   const now = new Date();
@@ -67,6 +67,8 @@ export default function NewExpenseForm({categories, handleNewExpenseClose, handl
       return;
     }
 
+    const supabase = await createClient();
+    const user = await supabase.auth.getUser();
     const { error } = await supabase.from('transactions').insert([
       {
         type: formData.type,
@@ -77,6 +79,7 @@ export default function NewExpenseForm({categories, handleNewExpenseClose, handl
         category: formData.category,
         date: formData.date,
         message: formData.message,
+        user_id: user.data.user.id
       },
     ]);
 

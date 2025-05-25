@@ -6,7 +6,7 @@ import {
   Stack,
 } from '@mui/material';
 
-import Category from '@/app/components/Category';
+import Category from './Category';
 
 export default function TransactionsList({ transactions, categories }) {
 
@@ -24,7 +24,7 @@ export default function TransactionsList({ transactions, categories }) {
     <>
       {Object.entries(transactionsGroupedByMonth).map(([month, transactions]) => (
 
-        <Box key={`transactions-group-${month}`} sx={{ marginTop: '3em'}}>
+        <Box key={`transactions-group-${month}`}>
           <Typography variant="body2" sx={{ borderBottom: '1px solid black', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
             {new Date(month).toLocaleString('default', { month: 'long', year: 'numeric' })}
           </Typography>
