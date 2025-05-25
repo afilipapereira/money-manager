@@ -8,7 +8,7 @@ import {
 
 import Category from './Category';
 
-export default function TransactionsList({ transactions, categories }) {
+export default function TransactionsList({ transactions, categories, handleOpenTransactionDetail }) {
 
   const transactionsGroupedByMonth = transactions.reduce((acc, expense) => {
     const dateObj = new Date(expense.date);
@@ -24,7 +24,7 @@ export default function TransactionsList({ transactions, categories }) {
     <>
       {Object.entries(transactionsGroupedByMonth).map(([month, transactions]) => (
 
-        <Box key={`transactions-group-${month}`}>
+        <Box key={`transactions-group-${month}`} mb={7}>
           <Typography variant="body2" sx={{ borderBottom: '1px solid black', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
             {new Date(month).toLocaleString('default', { month: 'long', year: 'numeric' })}
           </Typography>
@@ -46,10 +46,10 @@ export default function TransactionsList({ transactions, categories }) {
             const totalAmountFormatted = new Intl.NumberFormat('en-IE', {
               style: 'currency',
               currency: 'EUR',
-            }).format(transaction.shared_by * transaction.amount);
+            }).format(transaction.amount);
 
             return (
-              <Box key={`transaction-${index}`} sx={{ padding: '10px 0', borderBottom: '1px solid #ccc' }}>
+              <Box onClick={e => handleOpenTransactionDetail(e, transaction.id)} key={`transaction-${index}`} sx={{ padding: '10px 0', borderBottom: '1px solid #ccc' }}>
                 <Stack key={transaction.id}
                   direction="row"
                   spacing={3}
@@ -60,7 +60,6 @@ export default function TransactionsList({ transactions, categories }) {
                   <Typography variant="caption" sx={{ lineHeight: 1.3, textAlign: 'center', textTransform: 'uppercase', alignSelf: 'center' }}>{month}<br/>{day}</Typography>
                   <Box sx={{flexGrow: 1}}>
                     {transaction.name}
-                    <small>{transaction.shared_by > 1 && ` ${totalAmountFormatted}`}</small>
                     <br/>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Category category={category} />
