@@ -46,7 +46,7 @@ export default function TransactionsList({ transactions, categories, handleOpenT
             const totalAmountFormatted = new Intl.NumberFormat('en-IE', {
               style: 'currency',
               currency: 'EUR',
-            }).format(transaction.shared_by * transaction.amount);
+            }).format(transaction.amount);
 
             return (
               <Box onClick={e => handleOpenTransactionDetail(e, transaction.id)} key={`transaction-${index}`} sx={{ padding: '10px 0', borderBottom: '1px solid #ccc' }}>
@@ -60,7 +60,6 @@ export default function TransactionsList({ transactions, categories, handleOpenT
                   <Typography variant="caption" sx={{ lineHeight: 1.3, textAlign: 'center', textTransform: 'uppercase', alignSelf: 'center' }}>{month}<br/>{day}</Typography>
                   <Box sx={{flexGrow: 1}}>
                     {transaction.name}
-                    <small>{transaction.shared_by > 1 && ` ${totalAmountFormatted}`}</small>
                     <br/>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Category category={category} />

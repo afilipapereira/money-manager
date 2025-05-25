@@ -27,7 +27,6 @@ export default function NewExpenseForm({transaction = null, categories, handleSu
     name: transaction ? transaction.name : '',
     type: transaction ? transaction.type : 'expense',
     amount: transaction ? transaction.amount : '',
-    shared_by: transaction ? transaction.shared_by : 1,
     salary: transaction ? transaction.salary : false,
     category: transaction ? transaction.category : '',
     date: transaction ? transaction.date : new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0],
@@ -47,14 +46,13 @@ export default function NewExpenseForm({transaction = null, categories, handleSu
   };
   const handleTransactionTypeChange = (event, transactionType) => {
     if(transactionType === 'income')
-      setFormData((prev) => ({ ...prev, shared_by: 1, category: '15' }));
+      setFormData((prev) => ({ ...prev, category: '15' }));
     setFormData((prev) => ({ ...prev, type: transactionType }));
   };
 
   const validateForm = (data) => {
     if (!data.name) return 'Name is required';
     if (!data.amount || isNaN(data.amount)) return 'Amount must be a number';
-    if (!data.shared_by || data.shared_by <= 0) return '"Shared by" field must be higher than 0.';
     if (!data.date) return '"Date" field is required.';
     return null; // no error
   };
@@ -78,8 +76,7 @@ export default function NewExpenseForm({transaction = null, categories, handleSu
       {
         type: formData.type,
         name: formData.name,
-        amount: formData.amount / formData.shared_by,
-        shared_by: formData.shared_by,
+        amount: formData.amount,
         salary: formData.salary,
         category: formData.category,
         date: formData.date,
@@ -189,7 +186,7 @@ export default function NewExpenseForm({transaction = null, categories, handleSu
 
           <Stack
             direction="row"
-            spacing={3}
+            spacing={1}
             sx={{
               justifyContent: "space-between",
               pb: 3, 
@@ -208,21 +205,10 @@ export default function NewExpenseForm({transaction = null, categories, handleSu
               required
               variant="standard"
             />
-            <TextField
-              label="Shared by"
-              name="shared_by"
-              value={formData.shared_by}
-              type="number"
-              onChange={handleChange}
-              slotProps={{ inputLabel: { shrink: true, }}}
-              fullWidth
-              variant="standard"
-              sx={{ flexBasis: '40%', display: formData.type === 'income' ? 'none' : 'block' }}
-            />
             
             <Box
               sx={{
-                flexBasis: '40%',
+                flexBasis: '45%',
                 display: formData.type === 'income' ? 'block' : 'none',
               }}
             >
