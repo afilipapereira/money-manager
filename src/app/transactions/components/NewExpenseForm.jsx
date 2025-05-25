@@ -16,7 +16,7 @@ import { NumericFormat } from 'react-number-format';
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 
-import Category from '@/app/components/Category';
+import Category from './Category';
 
 export default function NewExpenseForm({categories, handleNewExpenseClose, handleSubmitSuccess}) {
   const now = new Date();

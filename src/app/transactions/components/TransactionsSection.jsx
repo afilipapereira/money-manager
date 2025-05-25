@@ -8,9 +8,9 @@ import {
   Typography,
 } from '@mui/material';
 
-import HomeHeading from '@/app/components//HomeHeading';
-import NewExpense from '@/app/components/transactions/NewExpense';
-import TransactionsList from '@/app/components/transactions/TransactionsList';
+import HomeHeading from './HomeHeading';
+import NewExpense from './NewExpense';
+import TransactionsList from './TransactionsList';
 
 export default function TransactionsSection({ categories, user }) {
   const [transactions, setTransactions] = useState(null);

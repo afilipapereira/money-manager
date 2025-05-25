@@ -1,4 +1,4 @@
-import TransactionsSection from '@/app/components/transactions/TransactionsSection';
+import TransactionsSection from './components//TransactionsSection';
 
 import { createClient } from '@/utils/supabase/server';
 

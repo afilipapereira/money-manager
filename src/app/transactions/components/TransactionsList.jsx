@@ -6,7 +6,7 @@ import {
   Stack,
 } from '@mui/material';
 
-import Category from '@/app/components/Category';
+import Category from './Category';
 
 export default function TransactionsList({ transactions, categories }) {
 

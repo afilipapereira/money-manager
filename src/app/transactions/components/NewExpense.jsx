@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import NewExpenseForm from '@/app/components/transactions/NewExpenseForm';
+import NewExpenseForm from './NewExpenseForm';
 
 export default function NewExpense({onTransactionAdded, categories}) {
   const [newExpenseOpen, setNewExpenseOpen] = useState(false);
