@@ -69,9 +69,12 @@ export default function NewExpenseForm({transaction = null, categories, handleSu
       return;
     }
 
+    const action = e.nativeEvent.submitter.value; //"add", "update", "delete"
+
     const supabase = await createClient();
     const user = await supabase.auth.getUser();
-    const { error } = await supabase.from('transactions').insert([
+
+    const updateFormData = [
       {
         type: formData.type,
         name: formData.name,
@@ -83,57 +86,47 @@ export default function NewExpenseForm({transaction = null, categories, handleSu
         message: formData.message,
         user_id: user.data.user.id
       },
-    ]);
+    ];
 
-    if (error) {
-      setFormError('Something went wrong. Please check your inputs.');
-      console.error('Insert failed:', error);
-    } else {
-      handleSubmitSuccess();
+    let data = null;
+    let userMessage = '';
+    let consoleLogMessage = '';
+
+    switch(action) {
+      case 'add':
+        data = await supabase.from('transactions').insert(updateFormData);
+        userMessage = 'Something went wrong. Please check your inputs.';
+        consoleLogMessage = 'Insert failed:';
+        break;
+      case 'update':
+        data = await supabase.from('transactions').update(updateFormData).eq('id', transaction.id);
+
+        userMessage = 'Something went wrong. Please check your inputs.';
+        consoleLogMessage = 'Update failed:';
+        break;
+      case 'delete':
+        data = await supabase.from('transactions').delete().eq('id', transaction.id);
+        userMessage = 'Something went wrong. Please try again.';
+        consoleLogMessage = 'Delete failed:';
+        break;
     }
-  };
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-
-    setFormError(null);
-    const errorMsg = validateForm(formData);
-    if (errorMsg) {
-      setFormError(errorMsg);
+    if (data.error) {
+      setFormError(userMessage);
+      console.error(consoleLogMessage, data.error);
       return;
-    }
-
-    const supabase = await createClient();
-    const user = await supabase.auth.getUser();
-    const { error } = await supabase.from('transactions').update([
-      {
-        type: formData.type,
-        name: formData.name,
-        amount: formData.amount / formData.shared_by,
-        shared_by: formData.shared_by,
-        salary: formData.salary,
-        category: formData.category,
-        date: formData.date,
-        message: formData.message,
-        user_id: user.data.user.id
-      },
-    ]).eq('id', transaction.id);
-
-    if (error) {
-      setFormError('Something went wrong. Please check your inputs.');
-      console.error('Update failed:', error);
     } else {
       handleSubmitSuccess();
     }
   };
-  
+
 
   return (
     <Box sx={{ position: 'fixed', inset: 0, zIndex: 10, padding: '20px', backgroundColor: 'rgba(0, 0, 0, 0.1)' }} onClick={handleCloseTransactionDetail}>
       <Box
         onClick={e => e.stopPropagation()}
         component="form"
-        onSubmit={transaction ? handleUpdate : handleSubmit}
+        onSubmit={handleSubmit}
         sx={{
           position: 'relative',
           maxWidth: 400,
@@ -194,7 +187,7 @@ export default function NewExpenseForm({transaction = null, categories, handleSu
             sx={{ pb: 3 }}
           />
 
-           <Stack
+          <Stack
             direction="row"
             spacing={3}
             sx={{
@@ -301,11 +294,19 @@ export default function NewExpenseForm({transaction = null, categories, handleSu
             sx={{ pb: 3 }}
           />
           {transaction ?
-            <Button variant="contained" type="submit" sx={{ mt: 'auto' }}>
-              Update
-            </Button>
+            <Stack
+              direction="row"
+              spacing={1}
+            >
+              <Button variant="contained" value="update" type="submit" sx={{ flexGrow: 1,mt: 'auto' }}>
+                Update
+              </Button>
+              <Button variant="outlined" value="delete" type="submit" sx={{ flexGrow: 1,mt: 'auto' }} color="error">
+                Delete
+              </Button>
+            </Stack>
           : 
-            <Button variant="contained" type="submit" sx={{ mt: 'auto' }}>
+            <Button variant="contained" value="add" type="submit" sx={{ mt: 'auto' }}>
               Submit
             </Button>
     }
