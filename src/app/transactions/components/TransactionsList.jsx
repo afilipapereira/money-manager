@@ -24,7 +24,7 @@ export default function TransactionsList({ transactions, categories, handleOpenT
     <>
       {Object.entries(transactionsGroupedByMonth).map(([month, transactions]) => (
 
-        <Box key={`transactions-group-${month}`}>
+        <Box key={`transactions-group-${month}`} mb={7}>
           <Typography variant="body2" sx={{ borderBottom: '1px solid black', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
             {new Date(month).toLocaleString('default', { month: 'long', year: 'numeric' })}
           </Typography>
