@@ -8,7 +8,7 @@ import {
 
 import Category from './Category';
 
-export default function TransactionsList({ transactions, categories }) {
+export default function TransactionsList({ transactions, categories, handleOpenTransactionDetail }) {
 
   const transactionsGroupedByMonth = transactions.reduce((acc, expense) => {
     const dateObj = new Date(expense.date);
@@ -49,7 +49,7 @@ export default function TransactionsList({ transactions, categories }) {
             }).format(transaction.shared_by * transaction.amount);
 
             return (
-              <Box key={`transaction-${index}`} sx={{ padding: '10px 0', borderBottom: '1px solid #ccc' }}>
+              <Box onClick={e => handleOpenTransactionDetail(e, transaction.id)} key={`transaction-${index}`} sx={{ padding: '10px 0', borderBottom: '1px solid #ccc' }}>
                 <Stack key={transaction.id}
                   direction="row"
                   spacing={3}

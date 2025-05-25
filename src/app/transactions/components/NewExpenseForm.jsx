@@ -10,26 +10,28 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  IconButton,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { NumericFormat } from 'react-number-format';
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 
 import Category from './Category';
 
-export default function NewExpenseForm({categories, handleNewExpenseClose, handleSubmitSuccess}) {
+export default function NewExpenseForm({transaction = null, categories, handleSubmitSuccess, handleCloseTransactionDetail}) {
   const now = new Date();
   const [formError, setFormError] = useState(null);
   const [formData, setFormData] = useState({
-    name: '',
-    type: 'expense',
-    amount: '',
-    shared_by: 1,
-    salary: false,
-    category: '',
-    date: new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0],
-    message: '',
+    name: transaction ? transaction.name : '',
+    type: transaction ? transaction.type : 'expense',
+    amount: transaction ? transaction.amount : '',
+    shared_by: transaction ? transaction.shared_by : 1,
+    salary: transaction ? transaction.salary : false,
+    category: transaction ? transaction.category : '',
+    date: transaction ? transaction.date : new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0],
+    message: transaction ? transaction.message : '',
   });
 
   const handleChange = (e) => {
@@ -90,15 +92,50 @@ export default function NewExpenseForm({categories, handleNewExpenseClose, handl
       handleSubmitSuccess();
     }
   };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    setFormError(null);
+    const errorMsg = validateForm(formData);
+    if (errorMsg) {
+      setFormError(errorMsg);
+      return;
+    }
+
+    const supabase = await createClient();
+    const user = await supabase.auth.getUser();
+    const { error } = await supabase.from('transactions').update([
+      {
+        type: formData.type,
+        name: formData.name,
+        amount: formData.amount / formData.shared_by,
+        shared_by: formData.shared_by,
+        salary: formData.salary,
+        category: formData.category,
+        date: formData.date,
+        message: formData.message,
+        user_id: user.data.user.id
+      },
+    ]).eq('id', transaction.id);
+
+    if (error) {
+      setFormError('Something went wrong. Please check your inputs.');
+      console.error('Update failed:', error);
+    } else {
+      handleSubmitSuccess();
+    }
+  };
   
 
   return (
-    <Box sx={{ position: 'fixed', inset: 0, zIndex: 10, padding: '20px', backgroundColor: 'rgba(0, 0, 0, 0.1)' }} onClick={handleNewExpenseClose}>
+    <Box sx={{ position: 'fixed', inset: 0, zIndex: 10, padding: '20px', backgroundColor: 'rgba(0, 0, 0, 0.1)' }} onClick={handleCloseTransactionDetail}>
       <Box
         onClick={e => e.stopPropagation()}
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={transaction ? handleUpdate : handleSubmit}
         sx={{
+          position: 'relative',
           maxWidth: 400,
           width: '100%',
           height: '100%',
@@ -110,6 +147,21 @@ export default function NewExpenseForm({categories, handleNewExpenseClose, handl
           bgcolor: 'background.paper',
         }}
       >
+        <IconButton
+          aria-label="close"
+          onClick={handleCloseTransactionDetail}
+          sx={(theme) => ({
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            color: theme.palette.grey[500],
+            zIndex: 100,
+            padding: '10px'
+          })}
+        >
+          <CloseIcon />
+        </IconButton>
+
         <Stack sx={{ height: '100%' }}>
           <Box sx={{ pb: 6 }}>
             <Typography variant="h6" component="h6" sx={{ pb: 1 }}>
@@ -248,10 +300,15 @@ export default function NewExpenseForm({categories, handleNewExpenseClose, handl
             variant="standard"
             sx={{ pb: 3 }}
           />
-
-          <Button variant="contained" type="submit" sx={{ mt: 'auto' }}>
-            Submit
-          </Button>
+          {transaction ?
+            <Button variant="contained" type="submit" sx={{ mt: 'auto' }}>
+              Update
+            </Button>
+          : 
+            <Button variant="contained" type="submit" sx={{ mt: 'auto' }}>
+              Submit
+            </Button>
+    }
         </Stack>
       </Box>
     </Box>
